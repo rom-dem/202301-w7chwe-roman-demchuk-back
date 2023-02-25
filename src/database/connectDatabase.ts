@@ -1,5 +1,4 @@
 import "./connectDatabase.js";
-import chalk from "chalk";
 import createDebug from "debug";
 
 const debug = createDebug("fairbook:database");
@@ -11,7 +10,7 @@ const connectDatabase = async (url: string) => {
 
   try {
     await mongoose.connect(url);
-    debug(chalk.green("Connected to data base"));
+    debug("Connected to data base");
   } catch (error) {
     debug("Check the cables in your internet box");
     throw new Error("Error while connecting to data base");
