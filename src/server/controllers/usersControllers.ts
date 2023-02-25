@@ -1,7 +1,11 @@
 import { type NextFunction, type Request, type Response } from "express";
 import User from "../../database/models/User.js";
 
-const getUsers = async (req: Request, res: Response, next: NextFunction) => {
+export const getUsers = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   try {
     const users = await User.find();
 
