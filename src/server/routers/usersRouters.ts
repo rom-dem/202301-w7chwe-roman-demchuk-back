@@ -18,5 +18,5 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage });
 
-usersRouters.get("/users", getUsers);
-usersRouters.post("/users", upload.single("avatar"), createUser);
+usersRouters.get("/get", getUsers);
+usersRouters.post("/register", upload.single("avatar"), createUser);
