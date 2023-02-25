@@ -1,5 +1,6 @@
 import { type NextFunction, type Request, type Response } from "express";
 import User from "../../database/models/User.js";
+import { type UserPublic, type UserCredentials } from "../../types.js";
 
 export const getUsers = async (
   req: Request,
