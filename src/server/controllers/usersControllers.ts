@@ -31,7 +31,7 @@ export const createUser = async (
   const avatar = req.file?.filename;
   const hashedPassword = await bcryptjs.hash(password, 8);
 
-  const user = await User.create({
+  await User.create({
     username,
     password: hashedPassword,
     avatar,

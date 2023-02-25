@@ -16,7 +16,7 @@ const storage = multer.diskStorage({
   },
 });
 
-const upload = multer({ storage });
+const upload = multer({ storage, limits: { fileSize: 1000000 } });
 
 usersRouters.get("/get", getUsers);
 usersRouters.post("/register", upload.single("avatar"), createUser);
