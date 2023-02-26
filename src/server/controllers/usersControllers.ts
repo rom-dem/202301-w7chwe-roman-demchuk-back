@@ -4,6 +4,7 @@ import bcryptjs from "bcryptjs";
 import jwt from "jsonwebtoken";
 import User from "../../database/models/User.js";
 import { type UserCredentials } from "../../types.js";
+import { CustomError } from "../../CustomError/CustomError.js";
 
 export const getUsers = async (
   req: Request,
@@ -15,7 +16,11 @@ export const getUsers = async (
 
     res.status(200).json({ users });
   } catch (error) {
-    const customError = new Error("Error");
+    const customError = new CustomError(
+      "Couldn't access the user list",
+      400,
+      "Could't retrieve the user list"
+    );
     next(customError);
   }
 };
@@ -29,17 +34,26 @@ export const createUser = async (
   res: Response,
   next: NextFunction
 ) => {
-  const { password, username } = req.body;
-  const avatar = req.file?.filename;
-  const hashedPassword = await bcryptjs.hash(password, 8);
+  try {
+    const { password, username } = req.body;
+    const avatar = req.file?.filename;
+    const hashedPassword = await bcryptjs.hash(password, 8);
 
-  await User.create({
-    username,
-    password: hashedPassword,
-    avatar,
-  });
+    await User.create({
+      username,
+      password: hashedPassword,
+      avatar,
+    });
 
-  res.status(201).json({ username });
+    res.status(201).json({ username });
+  } catch (error) {
+    const customError = new CustomError(
+      "Duplicated user",
+      400,
+      "User already exists"
+    );
+    next(customError);
+  }
 };
 
 export const loginUser = async (
@@ -55,13 +69,21 @@ export const loginUser = async (
   const user = await User.findOne({ username });
 
   if (!user) {
-    const customError = new Error("Wrong credentials");
+    const customError = new CustomError(
+      "User does'nt exist",
+      401,
+      "Wrong credentials"
+    );
     next(customError);
     return;
   }
 
   if (!(await bcryptjs.compare(password, user.password))) {
-    const customError = new Error("Wrong credentials");
+    const customError = new CustomError(
+      "Password doesn't match",
+      401,
+      "Wrong credentials"
+    );
     next(customError);
     return;
   }
