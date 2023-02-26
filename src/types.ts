@@ -1,9 +1,9 @@
-export interface UserPublic {
-  username: string;
+export interface UserPublic extends UserCredentials {
   avatar: string;
 }
 
-export interface UserCredentials extends UserPublic {
+export interface UserCredentials {
+  username: string;
   password: string;
 }
 
