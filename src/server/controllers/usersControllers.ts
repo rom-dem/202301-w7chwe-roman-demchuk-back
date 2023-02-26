@@ -34,17 +34,26 @@ export const createUser = async (
   res: Response,
   next: NextFunction
 ) => {
-  const { password, username } = req.body;
-  const avatar = req.file?.filename;
-  const hashedPassword = await bcryptjs.hash(password, 8);
+  try {
+    const { password, username } = req.body;
+    const avatar = req.file?.filename;
+    const hashedPassword = await bcryptjs.hash(password, 8);
 
-  await User.create({
-    username,
-    password: hashedPassword,
-    avatar,
-  });
+    await User.create({
+      username,
+      password: hashedPassword,
+      avatar,
+    });
 
-  res.status(201).json({ username });
+    res.status(201).json({ username });
+  } catch (error) {
+    const customError = new CustomError(
+      "Duplicated user",
+      400,
+      "User already exists"
+    );
+    next(customError);
+  }
 };
 
 export const loginUser = async (
