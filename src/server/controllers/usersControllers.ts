@@ -48,9 +48,9 @@ export const createUser = async (
     res.status(201).json({ username });
   } catch (error) {
     const customError = new CustomError(
-      "Duplicated user",
+      "User already exists or missing input data",
       400,
-      "User already exists"
+      "User not created, check your data"
     );
     next(customError);
   }
