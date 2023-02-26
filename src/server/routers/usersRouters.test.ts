@@ -3,8 +3,9 @@ import { MongoMemoryServer } from "mongodb-memory-server";
 import { app } from "../app";
 import connectDatabase from "../../database/connectDatabase";
 import mongoose from "mongoose";
+import jwt from "jsonwebtoken";
 import User from "../../database/models/User";
-import { type UserCredentials } from "../../types";
+import { type UserPublic, type UserCredentials } from "../../types";
 
 let server: MongoMemoryServer;
 
@@ -13,16 +14,12 @@ beforeAll(async () => {
   await connectDatabase(server.getUri());
 });
 
-afterEach(async () => {
-  await User.deleteMany();
-});
-
 afterAll(async () => {
   await server.stop();
   await mongoose.connection.close();
 });
 
-const mockUser: UserCredentials = {
+const mockUser: UserPublic = {
   avatar: "romualdo.jpg",
   password: "romualdo1234",
   username: "romualdo",
@@ -39,6 +36,25 @@ describe("Given a POST '/fairbook/register' endpoint", () => {
         .expect(expectedStatus);
 
       expect(response.body).toHaveProperty("username", mockUser.username);
+    });
+  });
+});
+
+describe("Given a POST '/fairbook/login' endpoint", () => {
+  describe("When it receives a request with data to login with username 'romualdo' and password 'romualdo1234' and it exists in database", () => {
+    test("Then it should respond with status code '200'", async () => {
+      const expectedStatus = 200;
+      const urlPath = "/fairbook/login";
+      const expectedToken = "tokensito";
+
+      jwt.sign = jest.fn().mockReturnValue(expectedToken);
+
+      const response = await request(app)
+        .post(urlPath)
+        .send(mockUser)
+        .expect(expectedStatus);
+
+      expect(response.body).toHaveProperty("token", expectedToken);
     });
   });
 });
