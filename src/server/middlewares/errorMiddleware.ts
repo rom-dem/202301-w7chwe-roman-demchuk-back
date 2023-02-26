@@ -21,7 +21,7 @@ export const notFoundError = (
   res: Response,
   next: NextFunction
 ) => {
-  const error = new CustomError("Path not found", 404, "Endpoint not found");
+  const error = new CustomError("Endpoint not found", 404, "Path not found");
 
   next(error);
 };
